@@ -5,3 +5,4 @@ numpy
 soundfile
 librosa
 uvicorn
+python-multipart
