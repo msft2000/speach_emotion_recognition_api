@@ -6,3 +6,4 @@ soundfile
 librosa
 uvicorn
 python-multipart
+pydub
