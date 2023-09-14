@@ -50,11 +50,17 @@ async def predict_emotion(audio_file: UploadFile = File(...)):
     try:
         # Convertir el archivo de audio a formato .wav
         audio_data = await audio_file.read()  # Lee el contenido del archivo
-        audio = AudioSegment.from_file(BytesIO(audio_data), format="webm")
-        audio_file_converted_from_web3_to_wav = audio.export(format="wav", codec="pcm_s16le")
+        try:
+            audio = AudioSegment.from_file(BytesIO(audio_data), format="webm")
+        except:
+            audio = AudioSegment.from_file(BytesIO(audio_data), format="mp4")
+        
+        # Convertir audio a formato WAV con una frecuencia de muestreo consistente
+        audio = audio.set_channels(1).set_frame_rate(16000)  # Establece 1 canal y 16 kHz de frecuencia de muestreo
+        audio_file_converted_to_wav = audio.export(format="wav", codec="pcm_s16le")
 
         # Realizar la extracción de características
-        extracted_features = extract_feature(audio_file_converted_from_web3_to_wav)
+        extracted_features = extract_feature(audio_file_converted_to_wav)
 
         # Realizar la predicción
         pred = model.predict(extracted_features.reshape(1, -1))
